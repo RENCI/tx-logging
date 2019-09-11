@@ -1,0 +1,68 @@
+openapi: 3.0.0
+info:
+  description: |
+    This is a sample logging server.
+  version: "1.0.0"
+  title: txlogging
+tags:
+  - name: logging
+    description: logging
+paths:
+  /log:
+    post:
+      tags:
+        - logging
+      summary: Add a log entry
+      operationId: api.postLog
+      responses:
+        '200':
+          description: successful operation
+      requestBody:
+        content:
+          applicaton/json:
+            schema:
+              $ref: '#/components/schemas/Log'
+    get:
+      tags:
+        - logging
+      summary: get log entries
+      description: get log entries
+      operationId: api.getLog
+      parameters:
+        - name: start
+          in: query
+          description: start, nanosecond precision in utc
+          schema:
+            type: number
+        - name: end
+          in: query
+          description: end, nanosecond precision in utc
+          schema:
+            type: number
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/x-ndjson:
+              schema: {}
+        '400':
+          description: Invalid value
+components:
+  schemas:
+    Log:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        timestamp:
+          type: string
+          format: timestamp
+        message:
+          type: string
+        event:
+          type: string
+        source:
+          type: string
+        level:
+          type: string
