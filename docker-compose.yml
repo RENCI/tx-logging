@@ -28,7 +28,7 @@ services:
     volumes:
       - $FLUENTD_CONFIG_DIR:/fluentd/etc
     command: -v
-    environments:
+    environment:
       MONGODB_USERNAME: $MONGODB_USERNAME
       MONGODB_PASSWORD: $MONGODB_PASSWORD
     depends_on:
@@ -42,7 +42,7 @@ services:
     depends_on:
       - fluentd
       - mongodb
-    environments:
+    environment:
       FLUENTD_HOST: fluentd
       FLUENTD_PORT: 24224
       FLUENTD_APP: txlogging
