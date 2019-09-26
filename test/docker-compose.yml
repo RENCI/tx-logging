@@ -1,0 +1,7 @@
+version: '3'
+services:
+  txlogging-test:
+    build:
+      context: test
+    depends_on:
+      - txlogging
