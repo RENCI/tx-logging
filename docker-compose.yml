@@ -4,8 +4,8 @@ services:
     build:
       context: mongodb
     restart: always
-    # volumes:
-    #   - $MONGODB_DATA_DIR:/data/db
+    volumes:
+      - $MONGODB_DATA_DIR:/data/db
     environment:
       MONGO_INITDB_ROOT_USERNAME: $MONGO_INITDB_ROOT_USERNAME
       MONGO_INITDB_ROOT_PASSWORD: $MONGO_INITDB_ROOT_PASSWORD
