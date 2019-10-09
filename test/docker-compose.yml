@@ -2,6 +2,7 @@ version: '3'
 services:
   txlogging-test:
     build:
-      context: test
+      context: .
+      dockerfile: test/Dockerfile
     depends_on:
       - txlogging

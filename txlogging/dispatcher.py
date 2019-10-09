@@ -35,7 +35,7 @@ def getLog(start=None, end=None):
     def generate():
         for i in res:
             item = dumps(i)
-            yield(item)
+            yield(item + "\n")
     return Response(generate(), mimetype="application/x-ndjson")
 
 def postLog(body):
@@ -48,3 +48,8 @@ def postLog(body):
         logger.clear_last_error()
         return str(err), 500
     return "log posted", 200
+
+def deleteLog():
+    coll = mongo_client[mongo_database][mongo_collection]
+    coll.remove()
+    return "log deleted", 200
