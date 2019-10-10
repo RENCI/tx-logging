@@ -108,5 +108,18 @@ def test_add_log_id():
     requests.delete("http://txlogging:8080/log")
 
 
+def test_add_log_time_format():
+
+    msg2 = dict(msg)
+    msg2["timestamp"] = "2001"
+    
+    resp1 = requests.post("http://txlogging:8080/log", json=msg2)
+    
+    assert resp1.status_code == 400
+
+    requests.delete("http://txlogging:8080/log")
+
+
+
 
 

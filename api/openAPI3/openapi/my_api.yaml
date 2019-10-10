@@ -34,11 +34,13 @@ paths:
           description: start
           schema:
             type: string
+            format: date-time
         - name: end
           in: query
           description: end
           schema:
             type: string
+            format: date-time
       responses:
         '200':
           description: successful operation
@@ -65,7 +67,7 @@ components:
           not: {}
         timestamp:
           type: string
-          format: timestamp
+          format: date-time
         event:
           type: string
         source:
