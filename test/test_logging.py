@@ -4,7 +4,7 @@ import ndjson
 
 msg = {
         "event":"this is an event",
-        "timestamp": "2001-01-01",
+        "timestamp": "2001-01-01T00:00:00-01:00",
         "comments":"this is a comments",
         "level": "0",
         "source": "a"
@@ -23,9 +23,10 @@ def test_logging():
 
     assert resp2.status_code == 200
     assert len(ndjson.loads(resp2.text)) == 1
+    print("timestamp=", ndjson.loads(resp2.text))
 
-    start = "2001-01-01"
-    end = "2002-01-01"
+    start = "2001-01-01T00:00:00-01:00"
+    end = "2002-01-01T00:00:00-01:00"
 
     resp3 = requests.get("http://txlogging:8080/log", params={
         "start": start,
@@ -35,8 +36,8 @@ def test_logging():
     assert resp3.status_code == 200
     assert len(ndjson.loads(resp3.text)) == 1
 
-    start = "2002-01-01"
-    end = "2003-01-01"
+    start = "2002-01-01T00:00:00-01:00"
+    end = "2003-01-01T00:00:00-01:00"
 
     resp4 = requests.get("http://txlogging:8080/log", params={
         "start": start,

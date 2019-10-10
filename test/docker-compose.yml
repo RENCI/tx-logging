@@ -4,5 +4,6 @@ services:
     build:
       context: .
       dockerfile: test/Dockerfile
+    command: ["-s", "-x"]
     depends_on:
       - txlogging

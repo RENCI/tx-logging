@@ -5,6 +5,8 @@ from pymongo import MongoClient
 from flask import Response
 from bson.json_util import dumps
 import logging
+from dateutil.parser import *
+from datetime import datetime, timezone
 
 fluentd_host = os.environ["FLUENTD_HOST"]
 fluentd_port = int(os.environ["FLUENTD_PORT"])
@@ -16,16 +18,24 @@ mongo_collection = os.environ["MONGO_COLLECTION"]
 mongo_username = os.environ["MONGO_NON_ROOT_USERNAME"]
 mongo_password = os.environ["MONGO_NON_ROOT_PASSWORD"]
 
-
+log= logging.getLogger()
 logger = sender.FluentSender(fluentd_app, host=fluentd_host, port=fluentd_port, nanosecond_precision=True)
 mongo_client = MongoClient(mongodb_host, mongodb_port, username=mongo_username, password=mongo_password, authSource=mongo_database)
 
+def strtots(st):
+    return parse(st).timestamp()
+    
+def tstostr(ts):
+    dt = datetime.utcfromtimestamp(ts)
+    dt = dt.replace(tzinfo=timezone.utc)
+    return dt.isoformat()
+    
 def getLog(start=None, end=None):
     coll = mongo_client[mongo_database][mongo_collection]
     if start is not None or end is not None:
         q = {
             "timestamp": {
-                k:v for k,v in [("$gte", start), ("$lt", end)] if v is not None
+                k:strtots(v) for k,v in [("$gte", start), ("$lt", end)] if v is not None
             }
         }
         res = coll.find(q)
@@ -34,6 +44,9 @@ def getLog(start=None, end=None):
 
     def generate():
         for i in res:
+            log.error(f"i={i}")
+            timestamp = i["timestamp"]
+            i["timestamp"] = tstostr(timestamp)
             item = dumps(i)
             yield(item + "\n")
     return Response(generate(), mimetype="application/x-ndjson")
@@ -42,6 +55,7 @@ def postLog(body):
     log = copy.deepcopy(body)
     event = body["event"]
     timestamp = body["timestamp"]
+    log["timestamp"] = strtots(timestamp)
     if not logger.emit(event, log):
         err = logger.last_error
         print(err)
