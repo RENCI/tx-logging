@@ -18,7 +18,7 @@ mongo_collection = os.environ["MONGO_COLLECTION"]
 mongo_username = os.environ["MONGO_NON_ROOT_USERNAME"]
 mongo_password = os.environ["MONGO_NON_ROOT_PASSWORD"]
 
-log= logging.getLogger()
+local_logger=logging.getLogger()
 logger = sender.FluentSender(fluentd_app, host=fluentd_host, port=fluentd_port, nanosecond_precision=True)
 mongo_client = MongoClient(mongodb_host, mongodb_port, username=mongo_username, password=mongo_password, authSource=mongo_database)
 
@@ -27,8 +27,8 @@ def strtots(st):
     
 def tstostr(ts):
     dt = datetime.utcfromtimestamp(ts)
-    dt = dt.replace(tzinfo=timezone.utc)
-    return dt.isoformat()
+    dt2 = dt.replace(tzinfo=timezone.utc)
+    return dt2.isoformat()
     
 def getLog(start=None, end=None):
     coll = mongo_client[mongo_database][mongo_collection]
@@ -44,7 +44,6 @@ def getLog(start=None, end=None):
 
     def generate():
         for i in res:
-            log.error(f"i={i}")
             timestamp = i["timestamp"]
             i["timestamp"] = tstostr(timestamp)
             item = dumps(i)
@@ -58,7 +57,7 @@ def postLog(body):
     log["timestamp"] = strtots(timestamp)
     if not logger.emit(event, log):
         err = logger.last_error
-        print(err)
+        local_logger.log(err)
         logger.clear_last_error()
         return str(err), 500
     return "log posted", 200
