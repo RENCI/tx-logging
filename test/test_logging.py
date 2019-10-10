@@ -23,7 +23,6 @@ def test_logging():
 
     assert resp2.status_code == 200
     assert len(ndjson.loads(resp2.text)) == 1
-    print("timestamp=", ndjson.loads(resp2.text))
 
     start = "2001-01-01T00:00:00-01:00"
     end = "2002-01-01T00:00:00-01:00"
