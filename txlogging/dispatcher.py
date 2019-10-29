@@ -48,7 +48,7 @@ def postLog(body):
     log["timestamp"] = strtots(timestamp)
     if not logger.emit(event, log):
         err = logger.last_error
-        local_logger.log(err)
+        local_logger.error(err)
         logger.clear_last_error()
         return str(err), 500
     return "log posted", 200
