@@ -5,8 +5,7 @@ from pymongo import MongoClient
 from flask import Response
 from bson.json_util import dumps
 import logging
-from dateutil.parser import *
-from datetime import datetime, timezone
+from .utils import tstostr, strtots
 
 fluentd_host = os.environ["FLUENTD_HOST"]
 fluentd_port = int(os.environ["FLUENTD_PORT"])
@@ -22,14 +21,6 @@ local_logger=logging.getLogger()
 logger = sender.FluentSender(fluentd_app, host=fluentd_host, port=fluentd_port, nanosecond_precision=True)
 mongo_client = MongoClient(mongodb_host, mongodb_port, username=mongo_username, password=mongo_password, authSource=mongo_database)
 
-def strtots(st):
-    return parse(st).timestamp()
-    
-def tstostr(ts):
-    dt = datetime.utcfromtimestamp(ts)
-    dt2 = dt.replace(tzinfo=timezone.utc)
-    return dt2.isoformat()
-    
 def getLog(start=None, end=None):
     coll = mongo_client[mongo_database][mongo_collection]
     if start is not None or end is not None:
@@ -57,7 +48,7 @@ def postLog(body):
     log["timestamp"] = strtots(timestamp)
     if not logger.emit(event, log):
         err = logger.last_error
-        local_logger.log(err)
+        local_logger.error(err)
         logger.clear_last_error()
         return str(err), 500
     return "log posted", 200
