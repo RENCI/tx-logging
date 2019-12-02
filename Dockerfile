@@ -7,6 +7,7 @@ RUN pip3 install --no-cache-dir flask pymongo fluent-logger gunicorn connexion p
 
 COPY api/openAPI3 /usr/src/app/api
 COPY txlogging /usr/src/app/txlogging
+COPY tx-utils/src /usr/src/app
 
 EXPOSE 8080
 
