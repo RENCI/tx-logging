@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/RENCI/tx-logging.svg?token=hSyYs1SXtzNJJDmjUzHi&branch=master)](https://travis-ci.com/RENCI/tx-logging)
+
 # tx-logging
 
 ### run
