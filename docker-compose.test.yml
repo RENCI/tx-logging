@@ -46,7 +46,7 @@ services:
       - txlogging-mongodb
 
   txlogging-mongodb:
-    image: tx-persistence
+    image: txscience/tx-persistence:latest
     restart: always
     volumes:
       - $MONGODB_DATA_VOLUME:/data/db
