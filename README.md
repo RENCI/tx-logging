@@ -16,7 +16,7 @@ docker-compose -f docker-compose.test.yml up --build -V
 ```
 
 ### examples
-Log a message with minimal fields (e.g., no 'level', 'source', or 'message' fields) and add a custom field, "foo"
+Log a message with minimal fields (e.g., no 'message' field) and add a custom field, "foo"
 ```
 curl --header "Content-Type: application/json" -d "{ \"timestamp\": \"2019-09-20T00:00:00Z\", \"level\": \"1\", \"source\": \"some source\", \"event\": \"this is a test event\",   \"foo\": \"bar\" }" localhost:8080/log
  ```
@@ -28,7 +28,10 @@ curl --header "Content-Type: application/json" -d "{ \"timestamp\": \"2019-09-20
  
  List all messages with 'timestamp' between 2019-09-21 (notice 'end' is exclusive)
  ```
-  curl "http://localhost:8080/log?start=2019-09-21&end=2019-09-22"|sed -s 's/}}/}}\n/g'
+ # includes new log entry from example above
+  curl "http://localhost:8080/log?start=2019-09-20T00:00:00Z&end=2019-09-22T00:00:00Z"|sed -s 's/}}/}}\n/g'
+ # no example log entry
+  curl "http://localhost:8080/log?start=2019-09-21T00:00:00Z&end=2019-09-22T00:00:00Z"|sed -s 's/}}/}}\n/g'
   ```
   
  List all messages with 'timestamp' after 2019-09-20
