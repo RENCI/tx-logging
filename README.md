@@ -6,7 +6,7 @@
 
 ```
 docker-compose -f docker-compose.yml -f volume/docker-compose.yml up --build -d
-# bring it back down:
+# bring it back down (WARNING: logs do NOT persist!):
 docker-compose down
 ```
 
