@@ -2,9 +2,9 @@
 
 # tx-logging
 
-### run
+## run
 
-The container requires certain volumes to be declared in the docker-compose and environmental variables that are custom to your project. You should specify these outside of the github repo source base, such as in a directory like `../build`.
+Project-specific environmental variables and volumes in the docker-compose.yml must be declared for the logging to function properly. You should specify these outside of the github repo source base, such as in a directory like `../build`.
 
 For example:
 1. You might create a docker-compose file (e.g., `../build/docker-compose.volumes.yml`), with the following content:
@@ -15,7 +15,7 @@ volumes:
   txlogging-mongo-data:
     driver: local
 ```
-2. You might create a file with a set of bash commands (e.g., `../build/env.src`) that can be sourced (e.g., `. ../build/env.src`) to pull in values for all the variables in the root docker-compose.yml file:
+2. You might create a file with a set of bash commands (e.g., `../build/env.src`) that can be sourced (e.g., `source ../build/env.src`) to pull in values for all the variables in the root docker-compose.yml file:
 ```
 export MONGO_HOST=txlogging-mongodb
 export MONGO_PORT=27017
@@ -32,7 +32,7 @@ export FLUENTD_APP=txlogging
 export FLUENTD_HOST=txlogging-fluentd
 export FLUENTD_PORT=24224
 ```
-3. It would also be a good idea to create a file to unset thoes variables (e.g., `../build/env-unset.src`):
+3. It would also be a good idea to create a file to unset those variables (e.g., `../build/env-unset.src`):
 ```
 unset MONGO_HOST
 ...
@@ -48,7 +48,11 @@ docker-compose -f docker-compose.yml -f ../build/docker-compose.volumes.yml up -
 curl --header "Content-Type: application/json" -d "{ \"timestamp\": \"2019-09-20T00:00:00Z\", \"level\": \"1\", \"source\": \"some source\", \"event\": \"this is a test event\",   \"foo\": \"bar\" }" localhost:8080/log
 docker-compose -f docker-compose.yml -f ../build/docker-compose.volumes.yml down
 ```
-The full test run by dockerhub during CI/CD can also be run from the comand-line as follows (assumes the existence fo ./build/env-unset.src, see examples above):
+
+## test
+
+The full test run by dockerhub during CI/CD can also be run from the comand-line as follows (assumes the existence of ./build/env-unset.src, see examples above):
+
 ```
 source ../build/env-unset.src
  docker-compose -f docker-compose.test.yml up --build -V
@@ -61,12 +65,8 @@ docker-compose -f docker-compose.yml -f volume/docker-compose.yml up --build -d
 docker-compose down
 ```
 
-### test
-```
-docker-compose -f docker-compose.test.yml up --build -V 
-```
 
-### examples
+## examples
 Log a message with minimal fields (e.g., no 'message' field) and add a custom field, "foo"
 ```
 curl --header "Content-Type: application/json" -d "{ \"timestamp\": \"2019-09-20T00:00:00Z\", \"level\": \"1\", \"source\": \"some source\", \"event\": \"this is a test event\",   \"foo\": \"bar\" }" localhost:8080/log
@@ -92,7 +92,7 @@ curl --header "Content-Type: application/json" -d "{ \"timestamp\": \"2019-09-20
 
 ## Troubleshooting
 
-# Test fails: `requests.get` 
+### Test fails: `requests.get` 
 
 You may run the following:
 ```
@@ -110,7 +110,7 @@ docker-compose -f docker-compose.yml -f ../build/docker-compose.volumes.yml down
 docker-compose -f docker-compose.test.yml up --build -V
 ```
 
-__WARNING: do not do the following on a production or shared server, it will affect all users, proceed with caution__
+_WARNING: do not do the following on a production or shared server, it will affect all users, proceed with caution_
 
 To resolve the test error, remove the persistent log by pruning any unused images, containers and volumes:
 ```
@@ -121,7 +121,7 @@ docker volume prune -f
 
 One way to remove persistent logs is to remove all the containers and images on your sandbox, starting clean:
 
-__WARNING: do not do the following on a production or shared server, it will affect all users, proceed with caution__
+_WARNING: do not do the following on a production or shared server, it will affect all users, proceed with caution_
 
 ```
 docker container rm -f $(docker container list -aq)
