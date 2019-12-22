@@ -1,5 +1,0 @@
-version: '3'
-    
-volumes:
-  txlogging-mongo-data:
-    driver: local
