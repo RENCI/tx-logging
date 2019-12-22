@@ -10,6 +10,36 @@ services:
       - txlogging-fluentd
       - txlogging-mongodb
 
+  txlogging-mongodb:
+    image: txscience/tx-persistence:latest
+    restart: always
+    volumes:
+      - txlogging-mongo-data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: txloggingdb
+      MONGO_NON_ROOT_USERNAME: txlogging
+      MONGO_NON_ROOT_PASSWORD: log
+
+  txlogging-fluentd:
+    image: txscience/tx-fluentd:latest
+    restart: always
+    volumes:
+      - ../build/fluentd/etc:/fluentd/etc
+    environment:
+      FLUENTD_APP: txlogging
+      MONGO_HOST: txlogging-mongodb
+      MONGO_DATABASE: txloggingdb
+      MONGO_COLLECTION: log
+      MONGO_NON_ROOT_USERNAME: txlogging
+      MONGO_NON_ROOT_PASSWORD: log
+    depends_on:
+      - txlogging-mongodb
+
+# doesnt work:
+#      - ../build/fluentd/etc:/fluentd/etc
+
   txlogging:
     build: .
     restart: always
@@ -19,43 +49,15 @@ services:
     environment:
       FLUENTD_HOST: txlogging-fluentd
       FLUENTD_PORT: 24224
-      FLUENTD_APP: $FLUENTD_APP
+      FLUENTD_APP: txlogging
       MONGO_HOST: txlogging-mongodb
       MONGO_PORT: 27017
-      MONGO_DATABASE: $MONGO_DATABASE
-      MONGO_COLLECTION: $MONGO_COLLECTION
-      MONGO_NON_ROOT_USERNAME: $MONGO_NON_ROOT_USERNAME
-      MONGO_NON_ROOT_PASSWORD: $MONGO_NON_ROOT_PASSWORD
+      MONGO_DATABASE: txloggingdb
+      MONGO_COLLECTION: log
+      MONGO_NON_ROOT_USERNAME: txlogging
+      MONGO_NON_ROOT_PASSWORD: log
     ports:
-      - $API_PORT:8080
-
-  txlogging-fluentd:
-    build:
-      context: fluentd
-    restart: always
-    volumes:
-      - $FLUENTD_CONFIG_DIR:/fluentd/etc
-    environment:
-      FLUENTD_APP: $FLUENTD_APP
-      MONGO_HOST: txlogging-mongodb
-      MONGO_DATABASE: $MONGO_DATABASE
-      MONGO_COLLECTION: $MONGO_COLLECTION
-      MONGO_NON_ROOT_USERNAME: $MONGO_NON_ROOT_USERNAME
-      MONGO_NON_ROOT_PASSWORD: $MONGO_NON_ROOT_PASSWORD
-    depends_on:
-      - txlogging-mongodb
-
-  txlogging-mongodb:
-    image: txscience/tx-persistence:latest
-    restart: always
-    volumes:
-      - $MONGODB_DATA_VOLUME:/data/db
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: $MONGO_INITDB_ROOT_USERNAME
-      MONGO_INITDB_ROOT_PASSWORD: $MONGO_INITDB_ROOT_PASSWORD
-      MONGO_INITDB_DATABASE: $MONGO_DATABASE
-      MONGO_NON_ROOT_USERNAME: $MONGO_NON_ROOT_USERNAME
-      MONGO_NON_ROOT_PASSWORD: $MONGO_NON_ROOT_PASSWORD
+      - 8080:8080
 
 volumes:
   txlogging-mongo-data:
