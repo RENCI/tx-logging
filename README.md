@@ -48,8 +48,9 @@ docker-compose -f docker-compose.yml -f ../build/docker-compose.volumes.yml up -
 curl --header "Content-Type: application/json" -d "{ \"timestamp\": \"2019-09-20T00:00:00Z\", \"level\": \"1\", \"source\": \"some source\", \"event\": \"this is a test event\",   \"foo\": \"bar\" }" localhost:8080/log
 docker-compose -f docker-compose.yml -f ../build/docker-compose.volumes.yml down
 ```
-The full test run by dockerhub during CI/CD can also be run from the comand-line as follows:
+The full test run by dockerhub during CI/CD can also be run from the comand-line as follows (assumes the existence fo ./build/env-unset.src, see examples above):
 ```
+source ../build/env-unset.src
  docker-compose -f docker-compose.test.yml up --build -V
 ```
 The above command will not detach and must be ended with ^C. If the test fails, see troubleshooting section below.

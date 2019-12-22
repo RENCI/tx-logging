@@ -26,7 +26,7 @@ services:
     image: txscience/tx-fluentd:latest
     restart: always
     volumes:
-      - ../build/fluentd/etc:/fluentd/etc
+      - ./test/fluentd/etc:/fluentd/etc
     environment:
       FLUENTD_APP: txlogging
       MONGO_HOST: txlogging-mongodb
@@ -36,9 +36,6 @@ services:
       MONGO_NON_ROOT_PASSWORD: log
     depends_on:
       - txlogging-mongodb
-
-# doesnt work:
-#      - ../build/fluentd/etc:/fluentd/etc
 
   txlogging:
     build: .
