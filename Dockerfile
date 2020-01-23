@@ -3,9 +3,10 @@ FROM python:3-alpine
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
-RUN pip3 install --no-cache-dir flask pymongo fluent-logger gunicorn==19.9.0 connexion python-dateutil jsonschema
+RUN apk add --no-cache gcc musl
+RUN pip3 install --no-cache-dir flask pymongo fluent-logger gunicorn==19.9.0 connexion[swagger-ui] python-dateutil jsonschema flask-cors
 
-COPY api/openAPI3 /usr/src/app/api
+COPY api /usr/src/app/api
 COPY txlogging /usr/src/app/txlogging
 COPY tx-utils/src /usr/src/app
 
