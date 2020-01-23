@@ -52,7 +52,7 @@ paths:
     delete:
       tags:
         - logging
-      summary: get log entries
+      summary: delete log entries
       description: get log entries
       operationId: api.deleteLog
       responses:
